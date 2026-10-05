@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaziConnect Kenya - The Premier Career Marketplace</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            green: '#008751', // Kenyan flag green accent
+                            red: '#BA0C2F',   // Accent red
+                            dark: '#0F172A',
+                            primary: '#0284C7',
+                            hover: '#0369A1'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Smooth custom scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .tab-active {
+            border-bottom: 3px solid #0284C7;
+            color: #0284C7;
+            font-weight: 600;
+        }
+
+        @keyframes bounce-subtle {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-2px) scale(1.02);
+            }
+        }
+
+        .animate-bounce-subtle {
+            animation: bounce-subtle 2.5s ease-in-out infinite;
+        }
+
+        @keyframes k-enter {
+            0% {
+                transform: translateY(60px) scale(0.3) rotate(180deg);
+                opacity: 0;
+            }
+            70% {
+                transform: translateY(-10px) scale(1.1) rotate(-10deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .animate-heartbeat_slow {
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        body.dark-mode { background: #0f172a !important; color: #e2e8f0; }
+        body.dark-mode header,
+        body.dark-mode .bg-white { background-color: #1e293b !important; border-color: #334155 !important; }
+        body.dark-mode .bg-slate-50,
+        body.dark-mode .bg-slate-100 { background-color: #0f172a !important; }
+        body.dark-mode .text-slate-900,
+        body.dark-mode .text-slate-800,
+        body.dark-mode .text-slate-700 { color: #f8fafc !important; }
+        body.dark-mode .text-slate-600,
+        body.dark-mode .text-slate-500,
+        body.dark-mode .text-slate-400 { color: #cbd5e1 !important; }
+        body.dark-mode input,
+        body.dark-mode textarea,
+        body.dark-mode select { background-color: #0f172a !important; color: #f8fafc !important; border-color: #475569 !important; }
+        #view-employee.profile-mode > *:not(#seeker-profile) { display: none !important; }
+    </style>
+</head>
+<body class="font-sans antialiased text-slate-800 bg-slate-100 min-h-full flex flex-col">
+
+    <!-- MAIN NAVBAR HEADER -->
+    <header class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Brand Logo -->
+                <div class="flex items-center gap-3">
+                    <div id="logo-box" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-green to-emerald-600 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-brand-green/30 relative overflow-hidden group transition-all duration-300 hover:scale-110 hover:rotate-3 animate-heartbeat_slow">
+                        <span id="logo-k" class="relative z-10 drop-shadow-lg">K</span>
+                        <div class="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute -inset-1 bg-gradient-to-r from-brand-green via-emerald-500 to-brand-green opacity-0 group-hover:opacity-30 blur transition-opacity duration-500 rounded-2xl"></div>
+                        <div class="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-all duration-500 rounded-2xl"></div>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg text-slate-900 tracking-tight">
+                            <span id="kazi-text" class="inline-block">Kazi</span>
+                            <span id="connect-text" class="text-brand-green inline-block">Connect</span>
+                        </span>
+                        <span class="hidden sm:inline-block text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full ml-1.5 uppercase">Kenya</span>
+                    </div>
+                </div>
+
+                <button id="back-to-roles" onclick="showRoleSelection()" title="Back to role selection" class="hidden text-slate-500 hover:text-brand-primary p-2 transition" aria-label="Back to role selection">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+
+                <!-- Dual-Role Toggle Bar -->
+                <div id="role-switcher" class="hidden bg-slate-100 p-1 rounded-xl flex items-center border border-slate-200">
+                    <button id="role-btn-employee" onclick="switchRole('employee')" class="px-3 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 bg-white text-slate-900 shadow-sm">
+                        <i class="fa-solid fa-user-graduate text-brand-primary"></i>
+                        <span>Job Seeker</span>
+                    </button>
+                    <button id="role-btn-employer" onclick="switchRole('employer')" class="px-3 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 text-slate-500 hover:text-slate-900">
+                        <i class="fa-solid fa-building text-slate-400"></i>
+                        <span>Employer</span>
+                    </button>
+                </div>
+
+                <button id="profile-nav" onclick="toggleSeekerProfilePage()" title="Toggle my profile" class="hidden text-slate-500 hover:text-brand-primary p-2 transition" aria-label="Toggle my profile">
+                    <i class="fa-solid fa-user-circle"></i>
+                    <span class="hidden sm:inline ml-1 text-xs font-semibold">My Profile</span>
+                </button>
+
+                <!-- User Session Indicator / Auth Status -->
+                <div id="session-controls" class="hidden flex items-center gap-3">
+                    <div id="user-status-pill" class="flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs px-3 py-1.5 rounded-full">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                        <span id="user-status-text" class="font-medium">Unverified Seeker</span>
+                    </div>
+                    <button onclick="resetDemoData()" title="Reset Sample Data" class="text-slate-400 hover:text-slate-600 p-2 text-sm">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN BODY CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+
+        <section id="role-selection" class="min-h-[calc(100vh-8rem)] flex items-center justify-center py-10 rounded-3xl overflow-hidden bg-cover bg-center" style="background-image: linear-gradient(rgba(15, 23, 42, 0.58), rgba(15, 23, 42, 0.68)), url('https://th.bing.com/th/id/OIG1.DbKyN.XSmaxvkwAPo2hG?pid=ImgGn');">
+            <div class="w-full max-w-4xl">
+                <div class="text-center mb-10">
+                    <span class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-brand-primary">
+                        <i class="fa-solid fa-compass"></i> Kenya's career marketplace
+                    </span>
+                    <h1 class="mt-4 text-4xl sm:text-5xl font-black tracking-tight text-slate-900">Where do you want to go?</h1>
+                    <p class="mt-4 text-sm sm:text-base text-slate-500 max-w-xl mx-auto">Choose your workspace to find the right jobs or build your next team.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="group text-left bg-white border border-slate-200 rounded-2xl p-7 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-brand-primary transition-all">
+                        <span class="w-14 h-14 rounded-2xl bg-sky-100 text-brand-primary flex items-center justify-center text-2xl group-hover:bg-brand-primary group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </span>
+                        <h2 class="mt-6 text-2xl font-extrabold text-slate-900">I am a Job Seeker</h2>
+                        <p class="mt-2 text-sm text-slate-500">Create your profile, discover verified opportunities, and apply to employers across Kenya.</p>
+                        <button onclick="enterPortal('employee')" class="mt-7 inline-flex items-center gap-2 text-sm font-bold text-brand-primary">Find work <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i></button>
+                        <div class="mt-5 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs">
+                            <span class="text-slate-400">Already registered?</span>
+                            <button onclick="openPortalAuth('employee', 'login')" class="font-bold text-brand-primary hover:underline">Log in</button>
+                        </div>
+                    </div>
+
+                    <div class="group text-left bg-slate-900 border border-slate-900 rounded-2xl p-7 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+                        <span class="w-14 h-14 rounded-2xl bg-emerald-400/15 text-emerald-300 flex items-center justify-center text-2xl group-hover:bg-emerald-400 group-hover:text-slate-900 transition-colors">
+                            <i class="fa-solid fa-building"></i>
+                        </span>
+                        <h2 class="mt-6 text-2xl font-extrabold text-white">I am an Employer</h2>
+                        <p class="mt-2 text-sm text-slate-300">Post vacancies, collect candidate applications, and manage your recruitment pipeline.</p>
+                        <button onclick="openPortalAuth('employer', 'signup')" class="mt-7 inline-flex items-center gap-2 text-sm font-bold text-emerald-300">Hire Talent <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i></button>
+                        <div class="mt-5 pt-4 border-t border-white/10 flex items-center gap-2 text-xs">
+                            <span class="text-slate-400">Have an account?</span>
+                            <button onclick="openPortalAuth('employer', 'login')" class="font-bold text-emerald-300 hover:underline">Log in</button>
+                            <span class="text-slate-500">or</span>
+                            <button onclick="openPortalAuth('employer', 'signup')" class="font-bold text-emerald-300 hover:underline">Sign up</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 1: JOB SEEKER / EMPLOYEE INTERFACE                           -->
+        <!-- ================================================================= -->
+        <div id="view-employee" class="hidden space-y-6">
+            
+            <!-- ONBOARDING FLOW CARD (Steps 1 to 4) -->
+            <div id="onboarding-card" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-slate-100">
+                    <div id="onboarding-progress" class="h-full bg-brand-green transition-all duration-300 w-1/4"></div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b pb-4 border-slate-100">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <span>Job Seeker Access Workflow</span>
+                            <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full font-semibold">Requirement</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">Complete account creation, select a service plan, and verify payment to access thousands of verified Kenyan jobs.</p>
+                    </div>
+                    <!-- Step Indicators -->
+                    <div class="flex items-center gap-2 text-xs font-semibold">
+                        <span id="step-badge-1" class="w-7 h-7 rounded-full bg-brand-primary text-white flex items-center justify-center">1</span>
+                        <div class="w-4 h-0.5 bg-slate-200"></div>
+                        <span id="step-badge-2" class="w-7 h-7 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center">2</span>
+                        <div class="w-4 h-0.5 bg-slate-200"></div>
+                        <span id="step-badge-3" class="w-7 h-7 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center">3</span>
+                        <div class="w-4 h-0.5 bg-slate-200"></div>
+                        <span id="step-badge-4" class="w-7 h-7 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center"><i class="fa-solid fa-check"></i></span>
+                    </div>
+                </div>
+
+                <!-- STEP 1: CREATE ACCOUNT -->
+                <div id="step-content-1" class="space-y-4 max-w-xl mx-auto">
+                    <h3 class="font-bold text-slate-800 text-center text-base">Step 1: Create Job Seeker Account</h3>
+                    <form onsubmit="handleEmployeeRegister(event)" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-medium text-slate-700 mb-1">Full Name (as per National ID)</label>
+                            <input type="text" id="reg-name" required placeholder="e.g. Wanjiku Kamau" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-medium text-slate-700 mb-1">Email Address</label>
+                                <input type="email" id="reg-email" required placeholder="wanjiku@gmail.com" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block font-medium text-slate-700 mb-1">Phone Number (M-Pesa)</label>
+                                <input type="tel" id="reg-phone" required placeholder="0712345678" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary focus:outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-medium text-slate-700 mb-1">Password</label>
+                            <input type="password" required placeholder="••••••••" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary focus:outline-none">
+                        </div>
+                        <button type="submit" class="w-full bg-brand-primary hover:bg-brand-hover text-white py-2.5 rounded-lg font-semibold text-xs shadow-sm transition">
+                            Create Account & Continue <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- STEP 2: CHOOSE SUBSCRIPTION PLAN -->
+                <div id="step-content-2" class="hidden space-y-4">
+                    <h3 class="font-bold text-slate-800 text-center text-base">Step 2: Select Job Seeker Access Plan</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        
+                        <!-- Basic Plan -->
+                        <div onclick="selectPlan('Basic', 100)" class="plan-card border-2 border-slate-200 hover:border-brand-primary rounded-xl p-4 cursor-pointer transition relative bg-white">
+                            <h4 class="font-bold text-slate-900 text-sm">Basic Entry</h4>
+                            <p class="text-slate-500 mt-0.5">All jobs and opportunities</p>
+                            <div class="text-xl font-extrabold text-slate-900 my-3">KSh 100 <span class="text-xs font-normal text-slate-400">/ week</span></div>
+                            <ul class="space-y-2 text-slate-600 mb-4">
+                                <li class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Access all jobs</li>
+                                <li class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Standard applications</li>
+                                <li class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Job alerts</li>
+                            </ul>
+                            <button class="w-full bg-slate-100 text-slate-800 py-2 rounded-lg font-semibold hover:bg-brand-primary hover:text-white transition">Select Basic</button>
+                        </div>
+
+                        <!-- Standard Professional Plan -->
+                        <div onclick="selectPlan('Standard', 300)" class="plan-card border-2 border-brand-primary rounded-xl p-4 cursor-pointer transition relative bg-blue-50/50 shadow-sm">
+                            <span class="absolute -top-3 right-4 bg-brand-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Most Popular</span>
+                            <h4 class="font-bold text-slate-900 text-sm">Standard Entry</h4>
+                            <p class="text-slate-500 mt-0.5">All jobs and opportunities</p>
+                            <div class="text-xl font-extrabold text-slate-900 my-3">KSh 300 <span class="text-xs font-normal text-slate-400">/ month</span></div>
+                            <ul class="space-y-2 text-slate-600 mb-4">
+                                <li class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Access all jobs</li>
+                                <li class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Standard applications</li>
+                                <li class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Job alerts</li>
+                            </ul>
+                            <button class="w-full bg-brand-primary text-white py-2 rounded-lg font-semibold hover:bg-brand-hover transition">Select Standard</button>
+                        </div>
+
+                        <!-- Executive Premium Plan -->
+                        <div onclick="selectPlan('Professional', 1000)" class="plan-card border-2 border-slate-200 hover:border-brand-primary rounded-xl p-4 cursor-pointer transition relative bg-white">
+                            <h4 class="font-bold text-slate-900 text-sm">Professional Entry</h4>
+                            <p class="text-slate-500 mt-0.5">All jobs and opportunities</p>
+                            <div class="text-xl font-extrabold text-slate-900 my-3">KSh 1,000 <span class="text-xs font-normal text-slate-400">/ 4 months</span></div>
+                            <ul class="space-y-2 text-slate-600 mb-4">
+                                <li class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Access all jobs</li>
+                                <li class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Standard applications</li>
+                                <li class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Job alerts</li>
+                            </ul>
+                            <button class="w-full bg-slate-100 text-slate-800 py-2 rounded-lg font-semibold hover:bg-brand-primary hover:text-white transition">Select Executive</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- STEP 3: M-PESA PAYMENT & VERIFICATION -->
+                <div id="step-content-3" class="hidden max-w-lg mx-auto space-y-4">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 text-brand-green rounded-full mb-2">
+                            <i class="fa-solid fa-mobile-screen-button text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base">Step 3: Verify M-Pesa Payment</h3>
+                        <p class="text-xs text-slate-500">Completing plan payment for <span id="summary-plan-name" class="font-semibold text-slate-800">Standard</span> (<span id="summary-plan-price" class="font-bold text-emerald-600">KSh 300</span>)</p>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs space-y-3">
+                        <div class="flex justify-between items-center pb-2 border-b">
+                            <span class="text-slate-500">Paybill Number:</span>
+                            <span class="font-mono font-bold text-slate-800 text-sm">888900</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-2 border-b">
+                            <span class="text-slate-500">Account Name:</span>
+                            <span class="font-semibold text-slate-800">KAZI-ACCESS</span>
+                        </div>
+                        <div>
+                            <label class="block font-medium text-slate-700 mb-1">M-Pesa Phone Number</label>
+                            <input type="text" id="mpesa-phone" value="0712345678" class="w-full px-3 py-2 border rounded-lg font-mono focus:ring-2 focus:ring-brand-green">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-slate-700 mb-1">M-Pesa Transaction Code (e.g., QKH892312)</label>
+                            <input type="text" id="mpesa-code" placeholder="Enter 10-character code" class="w-full px-3 py-2 border rounded-lg uppercase font-mono focus:ring-2 focus:ring-brand-green">
+                        </div>
+                        <button onclick="triggerMpesaPush()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bolt"></i> Send STK Push / Verify Payment
+                        </button>
+                        <button id="demo-verify-button" onclick="completeDemoVerification()" class="hidden w-full border border-amber-300 bg-amber-50 text-amber-800 font-semibold py-2 rounded-lg transition hover:bg-amber-100">
+                            Continue with Demo Verification (Testing Only)
+                        </button>
+                        <p id="demo-verify-note" class="hidden text-center text-[11px] text-amber-700">Demo mode is enabled with <strong>?demo=1</strong>. No payment will be processed.</p>
+                    </div>
+                </div>
+
+                <!-- STEP 4: VERIFICATION COMPLETE / ACCESS UNLOCKED -->
+                <div id="step-content-4" class="hidden text-center py-6 space-y-3">
+                    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900">Account Fully Verified!</h3>
+                    <p class="text-xs text-slate-500 max-w-md mx-auto">Your M-Pesa payment was successfully confirmed. You can now browse all categories and apply directly to Kenyan employers.</p>
+                    <button onclick="unlockFullCatalog()" class="bg-brand-primary text-white text-xs font-semibold px-6 py-2.5 rounded-lg hover:bg-brand-hover transition shadow">
+                        Browse Full Job Marketplace
+                    </button>
+                </div>
+            </div>
+
+            <!-- JOB SEEKER PROFILE -->
+            <section id="seeker-profile" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">My Profile</h2>
+                        <p class="text-xs text-slate-500">Manage your contact details, photo, email alerts, and display settings.</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <button type="button" onclick="showEmployeeWorkspace()" class="text-brand-primary font-semibold hover:underline mr-2">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Back to jobs
+                        </button>
+                        <label for="profile-theme" class="font-semibold text-slate-600">Theme</label>
+                        <select id="profile-theme" onchange="applyTheme(this.value)" class="border border-slate-200 rounded-lg px-2 py-1.5">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                    </div>
+                </div>
+
+                <form onsubmit="saveSeekerProfile(event)" class="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-6 text-xs">
+                    <div class="space-y-3">
+                        <div class="w-32 h-32 mx-auto rounded-full bg-slate-100 border-4 border-white shadow flex items-center justify-center overflow-hidden">
+                            <img id="profile-photo-preview" class="hidden w-full h-full object-cover" alt="Profile photo">
+                            <i id="profile-photo-placeholder" class="fa-solid fa-user text-4xl text-slate-300"></i>
+                        </div>
+                        <label class="block text-center font-semibold text-brand-primary cursor-pointer hover:underline">
+                            Change profile photo
+                            <input id="profile-photo-input" type="file" accept="image/*" onchange="previewProfilePhoto(event)" class="hidden">
+                        </label>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-medium text-slate-700 mb-1">Full Name</label>
+                                <input id="profile-name" required class="w-full px-3 py-2 border rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block font-medium text-slate-700 mb-1">Email Address</label>
+                                <input id="profile-email" type="email" required class="w-full px-3 py-2 border rounded-lg">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-medium text-slate-700 mb-1">Phone Number</label>
+                            <input id="profile-phone" type="tel" required class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+                        <label class="flex items-start gap-2 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                            <input id="profile-email-notifications" type="checkbox" class="mt-0.5">
+                            <span><strong class="text-slate-800">Email me when an employer accepts my application</strong><br><span class="text-slate-500">Your acceptance notices are also recorded here for testing.</span></span>
+                        </label>
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-2">Acceptance notifications</h3>
+                            <div id="profile-notifications" class="space-y-2">
+                                <p class="text-slate-400">No acceptance notifications yet.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-2">My Applications</h3>
+                            <div id="profile-applications" class="space-y-2">
+                                <p class="text-slate-400">No applications yet.</p>
+                            </div>
+                        </div>
+                        <button type="submit" class="bg-brand-primary hover:bg-brand-hover text-white font-semibold px-4 py-2 rounded-lg">Save Profile</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- JOB MARKETPLACE CATALOG SECTION -->
+            <div id="job-catalog-wrapper" class="space-y-4">
+                
+                <!-- Category Filter Header -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="w-full md:w-auto">
+                        <h3 class="font-bold text-slate-900 text-sm">Job Categories</h3>
+                        <p class="text-xs text-slate-500">Filter jobs ranging from Entry Level/Vocational up to Senior Management</p>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto text-xs">
+                        <button onclick="filterCategory('All')" class="cat-pill bg-slate-900 text-white px-3 py-1.5 rounded-full font-medium transition">All Sectors</button>
+                        <button onclick="filterCategory('Casual & Vocational')" class="cat-pill bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-full font-medium transition">Casual & Vocational</button>
+                        <button onclick="filterCategory('Service & Hospitality')" class="cat-pill bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-full font-medium transition">Service & Hospitality</button>
+                        <button onclick="filterCategory('ICT & Tech')" class="cat-pill bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-full font-medium transition">ICT & Tech</button>
+                        <button onclick="filterCategory('Banking & Finance')" class="cat-pill bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-full font-medium transition">Banking & Finance</button>
+                        <button onclick="filterCategory('Healthcare & Public')" class="cat-pill bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-full font-medium transition">Healthcare & Public</button>
+                        <button onclick="filterCategory('NGO & Executive')" class="cat-pill bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-full font-medium transition">NGO & Executive</button>
+                    </div>
+                </div>
+
+                <!-- Job Search & Location Bar -->
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                    <div class="sm:col-span-6 relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+                        <input type="text" id="job-search-input" onkeyup="renderFilteredJobs()" placeholder="Search job title, skills, or employer..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-brand-primary focus:outline-none">
+                    </div>
+                    <div class="sm:col-span-4 relative">
+                        <i class="fa-solid fa-location-dot absolute left-3 top-3 text-slate-400 text-xs"></i>
+                        <select id="job-location-filter" onchange="renderFilteredJobs()" class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-brand-primary focus:outline-none">
+                            <option value="All">All Locations in Kenya</option>
+                            <option value="Baringo">Baringo</option>
+                            <option value="Bomet">Bomet</option>
+                            <option value="Bungoma">Bungoma</option>
+                            <option value="Busia">Busia</option>
+                            <option value="Elgeyo-Marakwet">Elgeyo-Marakwet</option>
+                            <option value="Embu">Embu</option>
+                            <option value="Garissa">Garissa</option>
+                            <option value="Homa Bay">Homa Bay</option>
+                            <option value="Isiolo">Isiolo</option>
+                            <option value="Kajiado">Kajiado</option>
+                            <option value="Kakamega">Kakamega</option>
+                            <option value="Kericho">Kericho</option>
+                            <option value="Kiambu">Kiambu</option>
+                            <option value="Kilifi">Kilifi</option>
+                            <option value="Kirinyaga">Kirinyaga</option>
+                            <option value="Kisii">Kisii</option>
+                            <option value="Kisumu">Kisumu</option>
+                            <option value="Kitui">Kitui</option>
+                            <option value="Kwale">Kwale</option>
+                            <option value="Laikipia">Laikipia</option>
+                            <option value="Lamu">Lamu</option>
+                            <option value="Machakos">Machakos</option>
+                            <option value="Makueni">Makueni</option>
+                            <option value="Mandera">Mandera</option>
+                            <option value="Marsabit">Marsabit</option>
+                            <option value="Meru">Meru</option>
+                            <option value="Migori">Migori</option>
+                            <option value="Mombasa">Mombasa</option>
+                            <option value="Murang'a">Murang'a</option>
+                            <option value="Nairobi">Nairobi</option>
+                            <option value="Nakuru">Nakuru</option>
+                            <option value="Nandi">Nandi</option>
+                            <option value="Narok">Narok</option>
+                            <option value="Nyamira">Nyamira</option>
+                            <option value="Nyandarua">Nyandarua</option>
+                            <option value="Nyeri">Nyeri</option>
+                            <option value="Samburu">Samburu</option>
+                            <option value="Siaya">Siaya</option>
+                            <option value="Taita-Taveta">Taita-Taveta</option>
+                            <option value="Tana River">Tana River</option>
+                            <option value="Tharaka-Nithi">Tharaka-Nithi</option>
+                            <option value="Trans Nzoia">Trans Nzoia</option>
+                            <option value="Turkana">Turkana</option>
+                            <option value="Uasin Gishu">Uasin Gishu</option>
+                            <option value="Vihiga">Vihiga</option>
+                            <option value="Wajir">Wajir</option>
+                            <option value="West Pokot">West Pokot</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <button onclick="renderFilteredJobs()" class="w-full bg-slate-900 text-white font-semibold py-2 rounded-lg text-xs hover:bg-slate-800 transition">Filter</button>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC JOBS GRID CONTAINER -->
+                <div id="jobs-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Populated via JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 2: EMPLOYER INTERFACE                                        -->
+        <!-- ================================================================= -->
+        <div id="view-employer" class="hidden space-y-6">
+            
+            <!-- Employer Dashboard Header -->
+            <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <span class="text-xs bg-brand-primary/30 text-blue-300 font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">Employer Portal</span>
+                    <h2 class="text-2xl font-extrabold mt-2">Manage Kenyan Recruitment</h2>
+                    <p class="text-xs text-slate-400 mt-1">Post vacancies across Kenyan counties, specify required credentials, and review applicants in real time.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="openPostJobModal()" class="bg-brand-green hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Post Vacancy
+                    </button>
+                    <button onclick="openPortalAuth('employer', 'login')" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2.5 rounded-xl font-semibold text-xs transition">
+                        <i class="fa-solid fa-user-shield"></i> Company Login
+                    </button>
+                </div>
+            </div>
+
+            <!-- Employer Metrics Summary -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                    <span class="text-slate-500 font-medium">Active Posted Jobs</span>
+                    <div id="stat-active-jobs" class="text-2xl font-bold text-slate-900 mt-1">0</div>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                    <span class="text-slate-500 font-medium">Total Applications Received</span>
+                    <div id="stat-total-apps" class="text-2xl font-bold text-brand-primary mt-1">0</div>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                    <span class="text-slate-500 font-medium">Shortlisted Candidates</span>
+                    <div id="stat-shortlisted" class="text-2xl font-bold text-brand-green mt-1">0</div>
+                </div>
+            </div>
+
+            <!-- Employer Posted Jobs List -->
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 space-y-4">
+                <h3 class="font-bold text-slate-900 text-base">My Posted Jobs</h3>
+                
+                <div id="employer-jobs-list" class="space-y-3 divide-y divide-slate-100">
+                    <!-- Dynamic List of Posted Vacancies -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- PORTAL LOGIN / SIGN-UP MODAL -->
+    <div id="modal-portal-auth" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                <div>
+                    <h3 id="portal-auth-title" class="font-bold text-slate-900">Create Account</h3>
+                    <p id="portal-auth-subtitle" class="text-xs text-slate-500">Set up your KaziConnect workspace.</p>
+                </div>
+                <button onclick="closeModal('modal-portal-auth')" class="text-slate-400 hover:text-slate-600 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="submitPortalAuth(event)" class="p-5 space-y-3 text-xs">
+                <input type="hidden" id="portal-auth-role">
+                <input type="hidden" id="portal-auth-mode">
+                <div id="portal-auth-name-field">
+                    <label id="portal-auth-name-label" class="block font-medium text-slate-700 mb-1">Full Name</label>
+                    <input type="text" id="portal-auth-name" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                </div>
+                <div>
+                    <label class="block font-medium text-slate-700 mb-1">Email Address</label>
+                    <input type="email" id="portal-auth-email" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                </div>
+                <div id="portal-auth-phone-field">
+                    <label class="block font-medium text-slate-700 mb-1">Phone Number</label>
+                    <input type="tel" id="portal-auth-phone" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                </div>
+                <div>
+                    <label class="block font-medium text-slate-700 mb-1">Password</label>
+                    <input type="password" id="portal-auth-password" required minlength="6" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                </div>
+                <div>
+                    <label class="block font-medium text-slate-700 mb-1">Confirm Password</label>
+                    <input type="password" id="portal-auth-confirm-password" required minlength="6" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                    <p id="password-match-error" class="text-red-500 text-[10px] mt-1 hidden">Passwords do not match</p>
+                </div>
+                <button id="portal-auth-submit" type="submit" class="w-full bg-brand-primary hover:bg-brand-hover text-white font-bold py-2.5 rounded-lg transition">Create Account</button>
+                <p class="text-center text-slate-500">
+                    <span id="portal-auth-switch-label">Already have an account?</span>
+                    <button id="portal-auth-switch" type="button" onclick="togglePortalAuthMode()" class="font-bold text-brand-primary hover:underline">Log in</button>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 1: JOB SEEKER APPLICATION SUBMISSION MODAL -->
+    <div id="modal-apply" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                <div>
+                    <h3 id="modal-apply-job-title" class="font-bold text-slate-900 text-sm">Apply for Job</h3>
+                    <p id="modal-apply-company" class="text-xs text-slate-500">Employer Name</p>
+                </div>
+                <button onclick="closeModal('modal-apply')" class="text-slate-400 hover:text-slate-600 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleJobApplicationSubmit(event)" class="p-4 overflow-y-auto space-y-4 text-xs flex-1">
+                <input type="hidden" id="modal-apply-job-id">
+                
+                <div class="bg-blue-50 border border-blue-200 text-blue-900 p-3 rounded-xl">
+                    <p class="font-semibold mb-1">Required Credentials for this Role:</p>
+                    <div id="modal-apply-req-list" class="flex flex-wrap gap-1 text-[11px]">
+                        <!-- Dynamic Checklists -->
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-medium text-slate-700 mb-1">Full Name</label>
+                    <input type="text" id="app-fullname" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Email</label>
+                        <input type="email" id="app-email" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Phone</label>
+                        <input type="tel" id="app-phone" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-medium text-slate-700 mb-1">National ID Number / Passport</label>
+                    <input type="text" id="app-idno" required placeholder="e.g. 32901234" class="w-full px-3 py-2 border rounded-lg font-mono focus:ring-2 focus:ring-brand-primary">
+                </div>
+
+                <div>
+                    <label class="block font-medium text-slate-700 mb-1">KRA PIN Number</label>
+                    <input type="text" id="app-kra" placeholder="A012345678Z" class="w-full px-3 py-2 border rounded-lg uppercase font-mono focus:ring-2 focus:ring-brand-primary">
+                </div>
+
+                <div>
+                    <label class="block font-medium text-slate-700 mb-1">Qualifications & Brief Statement</label>
+                    <textarea id="app-statement" rows="3" required placeholder="Summarize your relevant skills, past experience, and qualification match..." class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary"></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-medium text-slate-700 mb-1">Police Clearance / Good Conduct</label>
+                    <input type="file" id="app-good-conduct" accept=".pdf,.jpg,.png" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-brand-primary hover:file:bg-blue-100">
+                </div>
+
+                <div>
+                    <label class="block font-medium text-slate-700 mb-1">Academic Certificate</label>
+                    <input type="file" id="app-academic-cert" accept=".pdf,.jpg,.png" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-brand-primary hover:file:bg-blue-100">
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-brand-primary hover:bg-brand-hover text-white font-bold py-2.5 rounded-lg shadow transition">
+                        Submit Application to Employer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: EMPLOYER POST NEW JOB MODAL -->
+    <div id="modal-post-job" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-briefcase text-brand-green"></i>
+                    <span>Post New Vacancy in Kenya</span>
+                </h3>
+                <button onclick="closeModal('modal-post-job')" class="text-slate-400 hover:text-slate-600 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleEmployerPostJob(event)" class="p-5 overflow-y-auto space-y-4 text-xs flex-1">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Job Title</label>
+                        <input type="text" id="post-title" required placeholder="e.g. Accountant / Electrician / Driver" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Company / Business Name</label>
+                        <input type="text" id="post-company" required placeholder="e.g. Safaricom Ltd / Local Business" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Industry Category (Lowest to Highest)</label>
+                        <select id="post-category" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                            <option value="Casual & Vocational">1. Casual & Vocational (Domestic, Driver, Cleaner)</option>
+                            <option value="Service & Hospitality">2. Service & Hospitality (Sales, Waiter, Reception)</option>
+                            <option value="ICT & Tech">3. ICT & Tech (Software, IT Support, Networking)</option>
+                            <option value="Banking & Finance">4. Banking & Finance (Accountant, Auditor, Teller)</option>
+                            <option value="Healthcare & Public">5. Healthcare & Public (Nurse, Medical, Teaching)</option>
+                            <option value="NGO & Executive">6. NGO & Executive (Project Manager, Director)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Required Qualification Level</label>
+                        <select id="post-qualifications" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                            <option value="Primary / KCPE Certificate">Primary / KCPE Certificate</option>
+                            <option value="Secondary / KCSE Certificate">Secondary / KCSE Certificate</option>
+                            <option value="Artisan / Trade Certificate (NITA)">Artisan / Trade Certificate (NITA)</option>
+                            <option value="Diploma / Higher National Diploma">Diploma / Higher National Diploma</option>
+                            <option value="Bachelor's Degree">Bachelor's Degree</option>
+                            <option value="Master's / Executive Level">Master's / Executive Level</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Monthly Salary Range (KES / KSh)</label>
+                        <input type="text" id="post-salary" required placeholder="e.g. KSh 25,000 - 40,000 / pm" class="w-full px-3 py-2 border rounded-lg font-mono focus:ring-2 focus:ring-brand-primary">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">Location / County in Kenya</label>
+                        <select id="post-location" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary">
+                            <option value="Baringo">Baringo</option>
+                            <option value="Bomet">Bomet</option>
+                            <option value="Bungoma">Bungoma</option>
+                            <option value="Busia">Busia</option>
+                            <option value="Elgeyo-Marakwet">Elgeyo-Marakwet</option>
+                            <option value="Embu">Embu</option>
+                            <option value="Garissa">Garissa</option>
+                            <option value="Homa Bay">Homa Bay</option>
+                            <option value="Isiolo">Isiolo</option>
+                            <option value="Kajiado">Kajiado</option>
+                            <option value="Kakamega">Kakamega</option>
+                            <option value="Kericho">Kericho</option>
+                            <option value="Kiambu">Kiambu</option>
+                            <option value="Kilifi">Kilifi</option>
+                            <option value="Kirinyaga">Kirinyaga</option>
+                            <option value="Kisii">Kisii</option>
+                            <option value="Kisumu">Kisumu</option>
+                            <option value="Kitui">Kitui</option>
+                            <option value="Kwale">Kwale</option>
+                            <option value="Laikipia">Laikipia</option>
+                            <option value="Lamu">Lamu</option>
+                            <option value="Machakos">Machakos</option>
+                            <option value="Makueni">Makueni</option>
+                            <option value="Mandera">Mandera</option>
+                            <option value="Marsabit">Marsabit</option>
+                            <option value="Meru">Meru</option>
+                            <option value="Migori">Migori</option>
+                            <option value="Mombasa">Mombasa</option>
+                            <option value="Murang'a">Murang'a</option>
+                            <option value="Nairobi">Nairobi</option>
+                            <option value="Nakuru">Nakuru</option>
+                            <option value="Nandi">Nandi</option>
+                            <option value="Narok">Narok</option>
+                            <option value="Nyamira">Nyamira</option>
+                            <option value="Nyandarua">Nyandarua</option>
+                            <option value="Nyeri">Nyeri</option>
+                            <option value="Samburu">Samburu</option>
+                            <option value="Siaya">Siaya</option>
+                            <option value="Taita-Taveta">Taita-Taveta</option>
+                            <option value="Tana River">Tana River</option>
+                            <option value="Tharaka-Nithi">Tharaka-Nithi</option>
+                            <option value="Trans Nzoia">Trans Nzoia</option>
+                            <option value="Turkana">Turkana</option>
+                            <option value="Uasin Gishu">Uasin Gishu</option>
+                            <option value="Vihiga">Vihiga</option>
+                            <option value="Wajir">Wajir</option>
+                            <option value="West Pokot">West Pokot</option>
+                            <option value="Remote / Countrywide">Remote / Countrywide</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-medium text-slate-700 mb-1">Job Description & Responsibilities</label>
+                    <textarea id="post-desc" rows="3" required placeholder="Outline key duties, working hours, and expectations..." class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary"></textarea>
+                </div>
+
+                <!-- Credential Checkboxes requested from Applicant -->
+                <div>
+                    <label class="block font-medium text-slate-700 mb-1">Required Credentials from Applicants:</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-50 p-3 rounded-lg border">
+                        <label class="flex items-center gap-1.5"><input type="checkbox" id="cred-cv" checked class="rounded text-brand-primary"> CV / Resume</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" id="cred-id" checked class="rounded text-brand-primary"> National ID</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" id="cred-kra" checked class="rounded text-brand-primary"> KRA PIN</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" id="cred-conduct" class="rounded text-brand-primary"> Good Conduct</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" id="cred-cert" class="rounded text-brand-primary"> Academic Certs</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" id="cred-portfolio" class="rounded text-brand-primary"> Portfolio Link</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-brand-green hover:bg-emerald-600 text-white font-bold py-2.5 rounded-lg shadow transition">
+                    Publish Vacancy Now
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DRAWER / MODAL 3: VIEW APPLICANTS FOR A JOB (EMPLOYER SIDE) -->
+    <div id="modal-applicants" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-end hidden">
+        <div class="bg-white h-full max-w-xl w-full shadow-2xl flex flex-col">
+            <div class="p-4 border-b border-slate-200 bg-slate-900 text-white flex justify-between items-center">
+                <div>
+                    <h3 id="view-applicants-job-title" class="font-bold text-sm">Applications for Job</h3>
+                    <p class="text-xs text-slate-400">Review submitted credentials & shortlist candidates</p>
+                </div>
+                <button onclick="closeModal('modal-applicants')" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="applicants-list-container" class="p-4 overflow-y-auto space-y-3 flex-1 text-xs">
+                <!-- Dynamically populated applicant entries -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // GLOBAL APPLICATION STATE
+        let jobsData = [];
+        let currentRole = 'employee'; // 'employee' or 'employer'
+        let currentCategoryFilter = 'All';
+        let seekerState = {
+            registered: false,
+            fullName: '',
+            email: '',
+            phone: '',
+            plan: null,
+            paidAmount: 0,
+            verified: false,
+            profilePhoto: '',
+            emailNotifications: true,
+            theme: 'light',
+            notifications: []
+        };
+        let sharedUser = {
+            fullName: '',
+            company: '',
+            email: '',
+            phone: '',
+            role: ''
+        };
+
+        // INITIALIZATION ON LOAD
+        window.onload = function() {
+            loadStateFromStorage();
+            renderFilteredJobs();
+            updateStatsAndPill();
+            configureDemoVerification();
+            applyTheme(seekerState.theme || 'light');
+            showRoleSelection();
+        };
+
+        function loadStateFromStorage() {
+            const savedJobs = localStorage.getItem('kaziconnect_jobs');
+            if (savedJobs) {
+                jobsData = JSON.parse(savedJobs);
+            } else {
+                jobsData = [];
+                saveJobsToStorage();
+            }
+
+            const savedSeeker = localStorage.getItem('kaziconnect_seeker');
+            if (savedSeeker) {
+                seekerState = { ...seekerState, ...JSON.parse(savedSeeker) };
+            }
+
+            const savedUser = localStorage.getItem('kaziconnect_current_user');
+            if (savedUser) {
+                sharedUser = { ...sharedUser, ...JSON.parse(savedUser) };
+                seekerState.fullName = seekerState.fullName || sharedUser.fullName;
+                seekerState.email = seekerState.email || sharedUser.email;
+                seekerState.phone = seekerState.phone || sharedUser.phone;
+            }
+        }
+
+        function saveJobsToStorage() {
+            localStorage.setItem('kaziconnect_jobs', JSON.stringify(jobsData));
+        }
+
+        function saveSeekerToStorage() {
+            localStorage.setItem('kaziconnect_seeker', JSON.stringify(seekerState));
+        }
+
+        function saveSharedUser(identity) {
+            sharedUser = { ...sharedUser, ...identity };
+            localStorage.setItem('kaziconnect_current_user', JSON.stringify(sharedUser));
+        }
+
+        function resetDemoData() {
+            if (confirm("Reset all job posts and applicants back to initial demo state?")) {
+                localStorage.removeItem('kaziconnect_jobs');
+                localStorage.removeItem('kaziconnect_seeker');
+                location.reload();
+            }
+        }
+
+        function showRoleSelection() {
+            document.getElementById('role-selection').classList.remove('hidden');
+            document.getElementById('view-employee').classList.add('hidden');
+            document.getElementById('view-employer').classList.add('hidden');
+            document.getElementById('view-employee').classList.remove('profile-mode');
+            document.getElementById('job-catalog-wrapper').classList.add('hidden');
+            document.getElementById('seeker-profile').classList.add('hidden');
+            document.getElementById('role-switcher').classList.add('hidden');
+            document.getElementById('session-controls').classList.add('hidden');
+            document.getElementById('back-to-roles').classList.add('hidden');
+            document.getElementById('profile-nav').classList.add('hidden');
+        }
+
+        function enterPortal(role) {
+            if (role === 'employer' && !localStorage.getItem('kaziconnect_employer')) {
+                openPortalAuth('employer', 'signup');
+                return;
+            }
+
+            document.getElementById('role-selection').classList.add('hidden');
+            document.getElementById('role-switcher').classList.remove('hidden');
+            document.getElementById('session-controls').classList.remove('hidden');
+            document.getElementById('back-to-roles').classList.remove('hidden');
+            document.getElementById('profile-nav').classList.toggle('hidden', role !== 'employee');
+            switchRole(role);
+        }
+
+        function openPortalAuth(role, mode) {
+            document.getElementById('portal-auth-role').value = role;
+            document.getElementById('portal-auth-mode').value = mode;
+            updatePortalAuthMode();
+            document.getElementById('modal-portal-auth').classList.remove('hidden');
+        }
+
+        function togglePortalAuthMode() {
+            const modeField = document.getElementById('portal-auth-mode');
+            modeField.value = modeField.value === 'login' ? 'signup' : 'login';
+            updatePortalAuthMode();
+        }
+
+        function updatePortalAuthMode() {
+            const role = document.getElementById('portal-auth-role').value;
+            const mode = document.getElementById('portal-auth-mode').value;
+            const isEmployer = role === 'employer';
+            const isSignup = mode === 'signup';
+            const roleLabel = isEmployer ? 'Employer' : 'Job Seeker';
+
+            document.getElementById('portal-auth-title').innerText = `${isSignup ? 'Create' : 'Log in to'} ${roleLabel} Account`;
+            document.getElementById('portal-auth-subtitle').innerText = isEmployer
+                ? 'Create an employer account before posting vacancies.'
+                : 'Access your KaziConnect job seeker workspace.';
+            document.getElementById('portal-auth-name-label').innerText = isEmployer ? 'Company / Business Name' : 'Full Name';
+            document.getElementById('portal-auth-name-field').classList.toggle('hidden', !isSignup);
+            document.getElementById('portal-auth-phone-field').classList.toggle('hidden', !isSignup);
+            document.getElementById('portal-auth-confirm-password').closest('div').classList.toggle('hidden', !isSignup);
+            document.getElementById('portal-auth-name').required = isSignup;
+            document.getElementById('portal-auth-phone').required = isSignup;
+            document.getElementById('portal-auth-submit').innerText = isSignup ? 'Create Account & Continue' : 'Log In & Continue';
+            document.getElementById('portal-auth-switch-label').innerText = isSignup ? 'Already have an account?' : 'Need an account?';
+            document.getElementById('portal-auth-switch').innerText = isSignup ? 'Log in' : 'Sign up';
+        }
+
+        function submitPortalAuth(event) {
+            event.preventDefault();
+            const role = document.getElementById('portal-auth-role').value;
+            const mode = document.getElementById('portal-auth-mode').value;
+            const isSignup = mode === 'signup';
+            const enteredName = document.getElementById('portal-auth-name').value.trim();
+            const enteredEmail = document.getElementById('portal-auth-email').value.trim();
+            const enteredPhone = document.getElementById('portal-auth-phone').value.trim();
+            const enteredPassword = document.getElementById('portal-auth-password').value;
+            const confirmPassword = document.getElementById('portal-auth-confirm-password')?.value;
+
+            // Validate password confirmation for signup
+            if (isSignup) {
+                const passwordError = document.getElementById('password-match-error');
+                if (confirmPassword !== enteredPassword) {
+                    if (passwordError) {
+                        passwordError.classList.remove('hidden');
+                    }
+                    event.preventDefault();
+                    return;
+                } else {
+                    if (passwordError) {
+                        passwordError.classList.add('hidden');
+                    }
+                }
+            }
+
+            if (role === 'employer') {
+                const company = isSignup ? enteredName : sharedUser.company;
+                saveSharedUser({ company, email: enteredEmail || sharedUser.email, phone: enteredPhone || sharedUser.phone, role });
+                localStorage.setItem('kaziconnect_employer', JSON.stringify({
+                    company: sharedUser.company,
+                    email: sharedUser.email,
+                    phone: sharedUser.phone
+                }));
+            } else {
+                seekerState.fullName = isSignup ? enteredName : (sharedUser.fullName || seekerState.fullName);
+                seekerState.email = enteredEmail || sharedUser.email || seekerState.email;
+                seekerState.phone = enteredPhone || sharedUser.phone || seekerState.phone;
+                seekerState.registered = true;
+                saveSeekerToStorage();
+                saveSharedUser({ fullName: seekerState.fullName, email: seekerState.email, phone: seekerState.phone, role });
+            }
+
+            closeModal('modal-portal-auth');
+            enterPortal(role);
+            alert(`${isSignup ? 'Account created' : 'Logged in'} successfully.`);
+        }
+
+        function openSeekerProfilePage() {
+            currentRole = 'employee';
+            document.getElementById('view-employee').classList.remove('hidden');
+            document.getElementById('view-employee').classList.add('profile-mode');
+            document.getElementById('view-employer').classList.add('hidden');
+            document.getElementById('onboarding-card').classList.add('hidden');
+            document.getElementById('job-catalog-wrapper').classList.add('hidden');
+            document.getElementById('seeker-profile').classList.remove('hidden');
+            renderSeekerProfile();
+        }
+
+        function toggleSeekerProfilePage() {
+            const profile = document.getElementById('seeker-profile');
+            if (profile.classList.contains('hidden')) {
+                openSeekerProfilePage();
+            } else {
+                showEmployeeWorkspace();
+            }
+        }
+
+        function showEmployeeWorkspace() {
+            document.getElementById('view-employee').classList.remove('profile-mode');
+            document.getElementById('seeker-profile').classList.add('hidden');
+            document.getElementById('onboarding-card').classList.toggle('hidden', seekerState.verified);
+            document.getElementById('job-catalog-wrapper').classList.toggle('hidden', !seekerState.verified);
+            document.getElementById('view-employee').classList.remove('hidden');
+            document.getElementById('view-employer').classList.add('hidden');
+        }
+
+        // ROLE SWITCHING LOGIC
+        function switchRole(role) {
+            if (role === 'employer' && !localStorage.getItem('kaziconnect_employer')) {
+                openPortalAuth('employer', 'signup');
+                return;
+            }
+
+            currentRole = role;
+            document.getElementById('view-employee').classList.remove('profile-mode');
+            document.getElementById('role-selection').classList.add('hidden');
+            document.getElementById('role-switcher').classList.remove('hidden');
+            document.getElementById('session-controls').classList.remove('hidden');
+            document.getElementById('back-to-roles').classList.remove('hidden');
+            document.getElementById('profile-nav').classList.toggle('hidden', role !== 'employee');
+            const empView = document.getElementById('view-employee');
+            const emprView = document.getElementById('view-employer');
+            const btnEmp = document.getElementById('role-btn-employee');
+            const btnEmpr = document.getElementById('role-btn-employer');
+
+            if (role === 'employee') {
+                seekerState.fullName = seekerState.fullName || sharedUser.fullName;
+                seekerState.email = seekerState.email || sharedUser.email;
+                seekerState.phone = seekerState.phone || sharedUser.phone;
+                saveSeekerToStorage();
+                empView.classList.remove('hidden');
+                emprView.classList.add('hidden');
+                btnEmp.className = "px-3 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 bg-white text-slate-900 shadow-sm";
+                btnEmpr.className = "px-3 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 text-slate-500 hover:text-slate-900";
+            } else {
+                empView.classList.add('hidden');
+                emprView.classList.remove('hidden');
+                btnEmpr.className = "px-3 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 bg-white text-slate-900 shadow-sm";
+                btnEmp.className = "px-3 sm:px-4 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 text-slate-500 hover:text-slate-900";
+                renderEmployerDashboard();
+            }
+
+            if (role === 'employee') {
+                const workflow = document.getElementById('onboarding-card');
+                const catalog = document.getElementById('job-catalog-wrapper');
+                const profile = document.getElementById('seeker-profile');
+                workflow.classList.toggle('hidden', seekerState.verified);
+                catalog.classList.toggle('hidden', !seekerState.verified);
+                profile.classList.add('hidden');
+            }
+        }
+
+        // ONBOARDING WORKFLOW LOGIC
+        function handleEmployeeRegister(e) {
+            e.preventDefault();
+            seekerState.registered = true;
+            seekerState.fullName = document.getElementById('reg-name').value;
+            seekerState.email = document.getElementById('reg-email').value;
+            seekerState.phone = document.getElementById('reg-phone').value;
+            saveSeekerToStorage();
+            saveSharedUser({
+                fullName: seekerState.fullName,
+                email: seekerState.email,
+                phone: seekerState.phone,
+                role: 'employee'
+            });
+
+            showOnboardingStep(2);
+            updateStatsAndPill();
+        }
+
+        function selectPlan(planName, price) {
+            seekerState.plan = planName;
+            seekerState.paidAmount = price;
+            saveSeekerToStorage();
+
+            document.getElementById('summary-plan-name').innerText = planName;
+            document.getElementById('summary-plan-price').innerText = `KSh ${price}`;
+            document.getElementById('mpesa-phone').value = seekerState.phone || '0712345678';
+
+            showOnboardingStep(3);
+        }
+
+        async function triggerMpesaPush() {
+            const phoneNumber = document.getElementById('mpesa-phone').value.trim();
+            if (!phoneNumber) {
+                alert("Please enter your M-Pesa phone number.");
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/pay/stkpush', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phoneNumber,
+                        amount: seekerState.paidAmount,
+                        userId: 1,
+                        planName: seekerState.plan
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Payment request failed');
+                }
+
+                alert(data.message || 'M-Pesa payment prompt sent to your phone.');
+                seekerState.verified = true;
+                saveSeekerToStorage();
+                showOnboardingStep(4);
+                updateStatsAndPill();
+            } catch (error) {
+                alert(`Could not start M-Pesa payment: ${error.message}`);
+            }
+        }
+
+        function configureDemoVerification() {
+            const localDevelopment = ['localhost', '127.0.0.1', '::1', '[::1]'].includes(window.location.hostname) || window.location.protocol === 'file:';
+            const demoEnabled = localDevelopment || new URLSearchParams(window.location.search).get('demo') === '1';
+            document.getElementById('demo-verify-button').classList.toggle('hidden', !demoEnabled);
+            document.getElementById('demo-verify-note').classList.toggle('hidden', !demoEnabled);
+        }
+
+        function completeDemoVerification() {
+            seekerState.verified = true;
+            seekerState.demoVerified = true;
+            saveSeekerToStorage();
+            showOnboardingStep(4);
+            updateStatsAndPill();
+            unlockFullCatalog();
+        }
+
+        function showOnboardingStep(stepNum) {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`step-content-${i}`).classList.add('hidden');
+                const badge = document.getElementById(`step-badge-${i}`);
+                if (i <= stepNum) {
+                    badge.className = "w-7 h-7 rounded-full bg-brand-primary text-white flex items-center justify-center";
+                } else {
+                    badge.className = "w-7 h-7 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center";
+                }
+            }
+            document.getElementById(`step-content-${stepNum}`).classList.remove('hidden');
+            
+            const progressMap = { 1: '25%', 2: '50%', 3: '75%', 4: '100%' };
+            document.getElementById('onboarding-progress').style.width = progressMap[stepNum];
+        }
+
+        function unlockFullCatalog() {
+            document.getElementById('onboarding-card').classList.add('hidden');
+            document.getElementById('job-catalog-wrapper').classList.remove('hidden');
+            document.getElementById('seeker-profile').classList.add('hidden');
+            renderFilteredJobs();
+        }
+
+        function renderSeekerProfile() {
+            document.getElementById('profile-name').value = seekerState.fullName || '';
+            document.getElementById('profile-email').value = seekerState.email || '';
+            document.getElementById('profile-phone').value = seekerState.phone || '';
+            document.getElementById('profile-email-notifications').checked = seekerState.emailNotifications !== false;
+            document.getElementById('profile-theme').value = seekerState.theme || 'light';
+
+            const preview = document.getElementById('profile-photo-preview');
+            const placeholder = document.getElementById('profile-photo-placeholder');
+            preview.src = seekerState.profilePhoto || '';
+            preview.classList.toggle('hidden', !seekerState.profilePhoto);
+            placeholder.classList.toggle('hidden', Boolean(seekerState.profilePhoto));
+            renderProfileNotifications();
+            renderProfileApplications();
+        }
+
+        function previewProfilePhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                seekerState.profilePhoto = reader.result;
+                saveSeekerToStorage();
+                renderSeekerProfile();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveSeekerProfile(event) {
+            event.preventDefault();
+            seekerState.fullName = document.getElementById('profile-name').value.trim();
+            seekerState.email = document.getElementById('profile-email').value.trim();
+            seekerState.phone = document.getElementById('profile-phone').value.trim();
+            seekerState.emailNotifications = document.getElementById('profile-email-notifications').checked;
+            seekerState.theme = document.getElementById('profile-theme').value;
+            saveSeekerToStorage();
+            applyTheme(seekerState.theme);
+            updateStatsAndPill();
+            alert('Profile saved successfully.');
+            showEmployeeWorkspace();
+        }
+
+        function applyTheme(theme) {
+            document.body.classList.toggle('dark-mode', theme === 'dark');
+            if (seekerState) {
+                seekerState.theme = theme;
+                saveSeekerToStorage();
+            }
+        }
+
+        function renderProfileNotifications() {
+            const container = document.getElementById('profile-notifications');
+            const notifications = seekerState.notifications || [];
+            if (!notifications.length) {
+                container.innerHTML = '<p class="text-slate-400">No acceptance notifications yet.</p>';
+                return;
+            }
+
+            container.innerHTML = notifications.map(notification => `
+                <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900">
+                    <strong>Application accepted</strong>
+                    <p class="mt-1">${notification.message}</p>
+                    <span class="text-[11px] text-emerald-700">${notification.date}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderProfileApplications() {
+            const container = document.getElementById('profile-applications');
+            const email = (seekerState.email || '').toLowerCase();
+            const applications = [];
+
+            jobsData.forEach(job => {
+                job.applicants.filter(applicant => (applicant.email || '').toLowerCase() === email).forEach(applicant => {
+                    applications.push({ job, applicant });
+                });
+            });
+
+            if (!applications.length) {
+                container.innerHTML = '<p class="text-slate-400">No applications yet.</p>';
+                return;
+            }
+
+            container.innerHTML = applications.map(({ job, applicant }) => `
+                <div class="flex items-center justify-between gap-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                    <div>
+                        <strong class="text-slate-800">${job.title}</strong>
+                        <p class="text-slate-500">${job.company} • ${job.location}</p>
+                    </div>
+                    <span class="text-xs font-bold px-2 py-1 rounded-full ${applicant.status === 'Accepted' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${applicant.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function addAcceptanceNotification(job, applicant) {
+            if (!seekerState.emailNotifications || !seekerState.email || applicant.email.toLowerCase() !== seekerState.email.toLowerCase()) return;
+
+            seekerState.notifications = seekerState.notifications || [];
+            seekerState.notifications.unshift({
+                message: `${job.company} accepted your application for ${job.title}.`,
+                date: new Date().toLocaleString()
+            });
+            saveSeekerToStorage();
+            renderSeekerProfile();
+        }
+
+        function updateStatsAndPill() {
+            const pillText = document.getElementById('user-status-text');
+            if (seekerState.verified) {
+                pillText.innerText = `Verified (${seekerState.plan} Plan)`;
+                pillText.parentElement.className = "flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs px-3 py-1.5 rounded-full";
+                document.getElementById('onboarding-card').classList.add('hidden');
+            } else if (seekerState.registered) {
+                pillText.innerText = "Payment Pending";
+                showOnboardingStep(seekerState.plan ? 3 : 2);
+            } else {
+                pillText.innerText = "Unverified Seeker";
+                showOnboardingStep(1);
+            }
+        }
+
+        // FILTER & RENDER JOBS
+        function filterCategory(cat) {
+            currentCategoryFilter = cat;
+            document.querySelectorAll('.cat-pill').forEach(btn => {
+                if (btn.innerText.includes(cat) || (cat === 'All' && btn.innerText.includes('All'))) {
+                    btn.className = "cat-pill bg-slate-900 text-white px-3 py-1.5 rounded-full font-medium transition";
+                } else {
+                    btn.className = "cat-pill bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-full font-medium transition";
+                }
+            });
+            renderFilteredJobs();
+        }
+
+        function renderFilteredJobs() {
+            const container = document.getElementById('jobs-grid');
+            const searchTxt = document.getElementById('job-search-input').value.toLowerCase();
+            const locationVal = document.getElementById('job-location-filter').value;
+
+            const filtered = jobsData.filter(j => {
+                const matchCategory = (currentCategoryFilter === 'All') || (j.category === currentCategoryFilter);
+                const matchSearch = j.title.toLowerCase().includes(searchTxt) || j.company.toLowerCase().includes(searchTxt) || j.description.toLowerCase().includes(searchTxt);
+                const matchLocation = (locationVal === 'All') || (j.location === locationVal);
+                return matchCategory && matchSearch && matchLocation;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-slate-200 p-6">
+                        <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-2"></i>
+                        <p class="font-bold text-slate-700">No jobs found matching your criteria</p>
+                        <p class="text-xs text-slate-400 mt-1">Try resetting filters or searching for other job keywords.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(job => `
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+                    <div>
+                        <!-- Header with Category Badge & Applicants Count -->
+                        <div class="flex justify-between items-start gap-2 mb-2">
+                            <span class="text-[10px] font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md uppercase tracking-wider">${job.category}</span>
+                            <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                                <i class="fa-solid fa-users text-[10px]"></i> ${job.applicants.length} Applied
+                            </span>
+                        </div>
+
+                        <h3 class="font-bold text-slate-900 text-base leading-snug hover:text-brand-primary transition cursor-pointer">${job.title}</h3>
+                        <p class="text-xs font-medium text-slate-600 mt-0.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-building text-slate-400"></i> ${job.company}
+                            <span class="text-slate-300">•</span>
+                            <i class="fa-solid fa-location-dot text-slate-400"></i> ${job.location}
+                        </p>
+
+                        <!-- Qualifications & Salary details -->
+                        <div class="my-3 space-y-1.5 text-xs">
+                            <div class="flex items-center gap-2 text-slate-700">
+                                <i class="fa-solid fa-graduation-cap text-brand-primary w-4"></i>
+                                <span><strong class="font-semibold">Requirement:</strong> ${job.qualifications}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-slate-700">
+                                <i class="fa-solid fa-money-bill-wave text-brand-green w-4"></i>
+                                <span><strong class="font-semibold">Salary:</strong> ${job.salary}</span>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-slate-500 line-clamp-2">${job.description}</p>
+                    </div>
+
+                    <!-- Footer Details & Action -->
+                    <div class="pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
+                        <span class="text-slate-400"><i class="fa-regular fa-clock"></i> Posted ${job.postedAt}</span>
+                        <button onclick="openApplyModal(${job.id})" class="bg-brand-primary hover:bg-brand-hover text-white font-semibold px-4 py-2 rounded-lg shadow-xs transition">
+                            Apply Now
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // APPLY TO JOB HANDLER
+        function openApplyModal(jobId) {
+            if (!seekerState.verified) {
+                alert("Please complete account verification & payment step first to apply for jobs!");
+                switchRole('employee');
+                document.getElementById('onboarding-card').classList.remove('hidden');
+                return;
+            }
+
+            const job = jobsData.find(j => j.id === jobId);
+            if (!job) return;
+
+            document.getElementById('modal-apply-job-id').value = job.id;
+            document.getElementById('modal-apply-job-title').innerText = `Apply for ${job.title}`;
+            document.getElementById('modal-apply-company').innerText = `${job.company} • ${job.location}`;
+            
+            // Prefill user details if available
+            document.getElementById('app-fullname').value = seekerState.fullName || '';
+            document.getElementById('app-email').value = seekerState.email || '';
+            document.getElementById('app-phone').value = seekerState.phone || '';
+
+            // Required Credential Pills
+            const reqContainer = document.getElementById('modal-apply-req-list');
+            reqContainer.innerHTML = job.requiredCreds.map(c => `
+                <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-semibold"><i class="fa-solid fa-check"></i> ${c}</span>
+            `).join('');
+
+            document.getElementById('modal-apply').classList.remove('hidden');
+        }
+
+        async function handleJobApplicationSubmit(e) {
+            e.preventDefault();
+            const jobId = parseInt(document.getElementById('modal-apply-job-id').value);
+            const job = jobsData.find(j => j.id === jobId);
+
+            if (job) {
+                const newApplicant = {
+                    name: document.getElementById('app-fullname').value,
+                    email: document.getElementById('app-email').value,
+                    phone: document.getElementById('app-phone').value,
+                    idNo: document.getElementById('app-idno').value,
+                    kra: document.getElementById('app-kra').value,
+                    statement: document.getElementById('app-statement').value,
+                    status: 'Pending'
+                };
+
+                const formData = new FormData();
+                formData.append('jobId', jobId);
+                formData.append('userId', 1);
+                formData.append('fullNames', newApplicant.name);
+                formData.append('kraPin', newApplicant.kra);
+                formData.append('nationalId', newApplicant.idNo);
+
+                const goodConduct = document.getElementById('app-good-conduct').files[0];
+                const academicCert = document.getElementById('app-academic-cert').files[0];
+                if (goodConduct) formData.append('goodConduct', goodConduct);
+                if (academicCert) formData.append('academicCert', academicCert);
+
+                try {
+                    const response = await fetch('/api/jobs/apply', { method: 'POST', body: formData });
+                    const data = await response.json();
+                    if (!response.ok || !data.success) {
+                        throw new Error(data.error || 'Application submission failed');
+                    }
+
+                    storeLocalApplication(job, newApplicant);
+                    alert(data.message || `Application submitted successfully to ${job.company}!`);
+                } catch (error) {
+                    const localDevelopment = ['localhost', '127.0.0.1', '::1', '[::1]'].includes(window.location.hostname) || window.location.protocol === 'file:';
+                    if (localDevelopment) {
+                        storeLocalApplication(job, newApplicant);
+                        alert(`Demo application saved for ${job.company}.`);
+                    } else {
+                        alert(`Could not submit application: ${error.message}`);
+                    }
+                }
+            }
+        }
+
+        function storeLocalApplication(job, applicant) {
+            job.applicants.unshift(applicant);
+            saveJobsToStorage();
+            closeModal('modal-apply');
+            renderFilteredJobs();
+        }
+
+        // EMPLOYER DASHBOARD & ACTIONS
+        function renderEmployerDashboard() {
+            const activeJobsEl = document.getElementById('stat-active-jobs');
+            const totalAppsEl = document.getElementById('stat-total-apps');
+            const shortlistedEl = document.getElementById('stat-shortlisted');
+            const container = document.getElementById('employer-jobs-list');
+
+            activeJobsEl.innerText = jobsData.length;
+            
+            let totalApps = 0;
+            let totalShortlisted = 0;
+
+            jobsData.forEach(j => {
+                totalApps += j.applicants.length;
+                totalShortlisted += j.applicants.filter(a => a.status === 'Shortlisted').length;
+            });
+
+            totalAppsEl.innerText = totalApps;
+            shortlistedEl.innerText = totalShortlisted;
+
+            if (jobsData.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">No jobs posted yet. Click "Post Vacancy" above to add one.</p>`;
+                return;
+            }
+
+            container.innerHTML = jobsData.map(job => `
+                <div class="py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h4 class="font-bold text-slate-900 text-sm">${job.title}</h4>
+                            <span class="text-[10px] bg-blue-50 text-brand-primary px-2 py-0.5 rounded font-semibold">${job.category}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            ${job.location} • Salary: ${job.salary} • Posted ${job.postedAt}
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3 w-full md:w-auto justify-between">
+                        <div class="text-xs bg-emerald-50 text-brand-green font-bold px-3 py-1 rounded-full border border-emerald-200">
+                            ${job.applicants.length} Applicants
+                        </div>
+                        <button onclick="viewApplicantsForJob(${job.id})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-eye"></i> View Applicants
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openPostJobModal() {
+            if (!localStorage.getItem('kaziconnect_employer')) {
+                openPortalAuth('employer', 'signup');
+                return;
+            }
+
+            const employer = JSON.parse(localStorage.getItem('kaziconnect_employer') || '{}');
+            document.getElementById('post-company').value = sharedUser.company || employer.company || '';
+            document.getElementById('modal-post-job').classList.remove('hidden');
+        }
+
+        function handleEmployerPostJob(e) {
+            e.preventDefault();
+
+            // Collect credentials checked
+            const creds = [];
+            if (document.getElementById('cred-cv').checked) creds.push("CV / Resume");
+            if (document.getElementById('cred-id').checked) creds.push("National ID");
+            if (document.getElementById('cred-kra').checked) creds.push("KRA PIN");
+            if (document.getElementById('cred-conduct').checked) creds.push("Good Conduct");
+            if (document.getElementById('cred-cert').checked) creds.push("Academic Certs");
+            if (document.getElementById('cred-portfolio').checked) creds.push("Portfolio Link");
+
+            const newJob = {
+                id: Date.now(),
+                title: document.getElementById('post-title').value,
+                company: document.getElementById('post-company').value,
+                category: document.getElementById('post-category').value,
+                qualifications: document.getElementById('post-qualifications').value,
+                salary: document.getElementById('post-salary').value,
+                location: document.getElementById('post-location').value,
+                description: document.getElementById('post-desc').value,
+                requiredCreds: creds,
+                postedAt: "Just now",
+                applicants: []
+            };
+
+            jobsData.unshift(newJob);
+            saveJobsToStorage();
+            closeModal('modal-post-job');
+            renderEmployerDashboard();
+            renderFilteredJobs();
+
+            alert("Vacancy published successfully to the Kenyan Job Marketplace!");
+        }
+
+        function viewApplicantsForJob(jobId) {
+            const job = jobsData.find(j => j.id === jobId);
+            if (!job) return;
+
+            document.getElementById('view-applicants-job-title').innerText = `Applicants for: ${job.title}`;
+            const listContainer = document.getElementById('applicants-list-container');
+
+            if (job.applicants.length === 0) {
+                listContainer.innerHTML = `<div class="text-center py-8 text-slate-400">No applicants have submitted credentials for this job yet.</div>`;
+            } else {
+                listContainer.innerHTML = job.applicants.map((app, index) => `
+                    <div class="border border-slate-200 rounded-xl p-4 space-y-2 bg-slate-50">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">${app.name}</h4>
+                                <p class="text-slate-600"><strong>Email:</strong> ${app.email || 'Not provided'}</p>
+                                <p class="text-slate-600"><strong>Phone:</strong> ${app.phone || 'Not provided'}</p>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${app.status === 'Shortlisted' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                                ${app.status}
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-[11px] bg-white p-2 rounded border border-slate-200">
+                            <div><strong class="text-slate-600">National ID:</strong> ${app.idNo}</div>
+                            <div><strong class="text-slate-600">KRA PIN:</strong> ${app.kra || 'N/A'}</div>
+                        </div>
+
+                        <p class="text-slate-700 bg-white p-2 rounded border border-slate-200 italic">"${app.statement}"</p>
+
+                        <div class="flex gap-2 pt-1">
+                            <label class="flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
+                                <input type="checkbox" ${app.status === 'Accepted' ? 'checked' : ''} onchange="toggleApplicantAccepted(${job.id}, ${index}, this.checked)" class="rounded text-emerald-600">
+                                Accepted
+                            </label>
+                            <button onclick="updateApplicantStatus(${job.id}, ${index}, 'Shortlisted')" class="flex-1 bg-emerald-600 text-white font-semibold py-1.5 rounded hover:bg-emerald-700">Shortlist</button>
+                            <button onclick="updateApplicantStatus(${job.id}, ${index}, 'Rejected')" class="flex-1 bg-slate-200 text-slate-700 font-semibold py-1.5 rounded hover:bg-slate-300">Reject</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('modal-applicants').classList.remove('hidden');
+        }
+
+        function updateApplicantStatus(jobId, appIndex, newStatus) {
+            const job = jobsData.find(j => j.id === jobId);
+            if (job && job.applicants[appIndex]) {
+                job.applicants[appIndex].status = newStatus;
+                saveJobsToStorage();
+                if (newStatus === 'Shortlisted') addAcceptanceNotification(job, job.applicants[appIndex]);
+                viewApplicantsForJob(jobId);
+                renderEmployerDashboard();
+            }
+        }
+
+        function toggleApplicantAccepted(jobId, appIndex, accepted) {
+            const job = jobsData.find(item => item.id === jobId);
+            if (!job || !job.applicants[appIndex]) return;
+
+            job.applicants[appIndex].status = accepted ? 'Accepted' : 'Pending';
+            saveJobsToStorage();
+            if (accepted) addAcceptanceNotification(job, job.applicants[appIndex]);
+            viewApplicantsForJob(jobId);
+            renderEmployerDashboard();
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // Logo entrance animation - Box comes from top, K comes from bottom - repeats every minute
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoBox = document.getElementById('logo-box');
+            const logoK = document.getElementById('logo-k');
+            const kaziText = document.getElementById('kazi-text');
+            const connectText = document.getElementById('connect-text');
+            const brandText = document.querySelector('.flex.items-center.gap-3');
+            
+            if (logoBox && logoK && kaziText && connectText) {
+                // Store original display for text elements
+                const originalKaziDisplay = kaziText.style.display || 'inline-block';
+                const originalConnectDisplay = connectText.style.display || 'inline-block';
+                
+                // Function to trigger the animation
+                function triggerLogoAnimation() {
+                    // Disable heartbeat during animation
+                    logoBox.style.animationPlayState = 'paused';
+                    
+                    // Reset to initial state
+                    logoBox.style.cssText = 'position: relative; transform: translateY(-100px) scale(0.5); opacity: 0; transition: none;';
+                    logoK.style.cssText = 'position: absolute; transform: translateY(60px) scale(0.3) rotate(180deg); opacity: 0; transition: none;';
+                    
+                    // Reset text positions
+                    kaziText.style.cssText = 'display: inline-block; transform: translateX(100px); opacity: 0; transition: none;';
+                    connectText.style.cssText = 'display: inline-block; transform: translateX(-100px); opacity: 0; transition: none;';
+                    
+                    // Trigger animation after a brief delay
+                    setTimeout(() => {
+                        // Box comes from top with bounce
+                        logoBox.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                        logoBox.style.transform = 'translateY(0) scale(1)';
+                        logoBox.style.opacity = '1';
+                        
+                        // K comes from bottom with overshooting effect
+                        setTimeout(() => {
+                            logoK.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                            logoK.style.transform = 'translateY(-10px) scale(1.1) rotate(-10deg)';
+                            logoK.style.opacity = '1';
+                            
+                            // Text animations - Kazi comes from right, Connect comes from left
+                            setTimeout(() => {
+                                kaziText.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                                kaziText.style.transform = 'translateX(0)';
+                                kaziText.style.opacity = '1';
+                                
+                                setTimeout(() => {
+                                    connectText.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                                    connectText.style.transform = 'translateX(0)';
+                                    connectText.style.opacity = '1';
+                                }, 100);
+                                
+                                // K settles to final position
+                                setTimeout(() => {
+                                    logoK.style.transform = 'translateY(0) scale(1) rotate(0deg)';
+                                    
+                                    // Resume heartbeat animation
+                                    logoBox.style.animationPlayState = 'running';
+                                }, 250);
+                            }, 150);
+                        }, 100);
+                        
+                    }, 200);
+                }
+                
+                // Run initial animation
+                triggerLogoAnimation();
+                
+                // Repeat animation every 30 seconds (30000 milliseconds)
+                setInterval(triggerLogoAnimation, 30000);
+            }
+        });
+    </script>
+</body>
+</html>
